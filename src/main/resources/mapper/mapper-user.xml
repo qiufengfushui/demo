@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zxt.crowdfunding.dao.UserDao">
+    <select id="queryUserCount" resultType="int">
+        select count(1) from t_user
+        where 1 = 1
+        <if test="queryCondition != '' and queryCondition != null">
+            and userCode = #{queryCondition}
+        </if>
+    </select>
+
+    <select id="queryUser" resultType="cn.zxt.crowdfunding.pojo.User">
+        select * from t_user
+        where 1 = 1
+        <if test="queryCondition != '' and queryCondition != null">
+            and userCode LIKE CONCAT(CONCAT('%',#{queryCondition},'%'))
+        </if>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <insert id="addUser">
+        insert into t_user(
+          `userCode`,`userName`,`email`
+        )
+        value (
+          #{userCode},#{userName},#{email}
+        )
+    </insert>
+
+    <delete id="delBatchUser">
+        delete from t_user where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
